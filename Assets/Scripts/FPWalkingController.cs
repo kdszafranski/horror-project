@@ -2,12 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using CMF; // for controller base classes
-
+using TMPro;
 
 // Used Advanced walker controller as the starting point, too much to change relies on private stuff
 // Custom movement input can be implemented by creating a new script that inherits 'AdvancedWalkerController' and overriding the 'CalculateMovementDirection' function;
 public class FPWalkingController : Controller
 {
+    // Refs to UI
+    public TextMeshProUGUI ui_textOutput;
 
     //References to attached components;
     protected Transform tr;
@@ -227,16 +229,34 @@ public class FPWalkingController : Controller
     //Calculate and return movement velocity based on player input, controller state, ground normal [...];
     protected virtual Vector3 CalculateMovementVelocity()
     {
-        //Calculate (normalized) movement direction;
+        // Calculate (normalized) movement direction;
         Vector3 _velocity = CalculateMovementDirection();
 
-        //Multiply (normalized) velocity with movement speed;
+        
+
+        // Multiply (normalized) velocity with movement speed;
         if(runKeyIsPressed) {
 			_velocity *= runSpeed;
 		} else {
 			// walking
 			_velocity *= movementSpeed;
 		}
+
+        // backward
+        float _vert = characterInput.GetVerticalMovementInput();
+        if(_vert < 0f) {
+            _velocity *= backwardSpeed;
+        }
+
+        // strafing/sideways movement
+        float _horz = characterInput.GetHorizontalMovementInput();
+        if(_horz > 0 || _horz < 0) {
+            _velocity *= strafeSpeed;
+        }
+
+        // ui
+        ui_textOutput.text = _velocity.ToString();
+        
 
         return _velocity;
     }
