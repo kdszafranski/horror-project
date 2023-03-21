@@ -32,8 +32,41 @@ public class GameController : MonoBehaviour
 
     void LoadTask(int index = 0) {
         _currentTask = _taskData.tasks[index];
+        UpdateTaskUI();
+    }
 
+    void LoadTask(Task task) {
+        _currentTask = task;
+        UpdateTaskUI();
+    }
+
+    void UpdateTaskUI() {
         ui_currentTaskText.text = _currentTask.details;
+    }
+
+    void LoadNextTask(int idToLoad) {
+        foreach(Task task in _taskData.tasks) {
+            if(task.id == idToLoad) {
+                LoadTask(task);
+            }
+        }
+    }
+
+    public void CheckTask(Objective objective) {
+        Debug.Log("objective met: " + objective.id);
+        if(_currentTask.id == objective.id) {
+            CompleteObjective(_currentTask);
+        }
+    }
+
+    void CompleteObjective(Task task) {
+        // objective met!
+        // ui_currentTaskText.color = Color.yellow;
+
+        if(task.nextTaskId > 0) {
+            // load the next task
+            LoadNextTask(task.nextTaskId);
+        }
     }
 
 

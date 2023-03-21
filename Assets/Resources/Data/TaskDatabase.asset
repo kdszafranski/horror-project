@@ -14,9 +14,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   taskList:
     tasks:
-    - details: Explore the graveyard
-      completed: 0
     - details: Find Hollobee's grave
       completed: 0
+      id: 22
+      nextTaskId: 2
+    - details: Explore the graveyard
+      completed: 0
+      id: 1
+      nextTaskId: 0
     - details: Find something to dig up the grave
       completed: 0
+      id: 2
+      nextTaskId: 0
