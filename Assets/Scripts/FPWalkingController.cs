@@ -1,16 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using CMF;
+using CMF; // for controller base classes
 
 
-//Advanced walker controller script;
-//This controller is used as a basis for other controller types ('SidescrollerController');
-//Custom movement input can be implemented by creating a new script that inherits 'AdvancedWalkerController' and overriding the 'CalculateMovementDirection' function;
+// Used Advanced walker controller as the starting point, too much to change relies on private stuff
+// Custom movement input can be implemented by creating a new script that inherits 'AdvancedWalkerController' and overriding the 'CalculateMovementDirection' function;
 public class FPWalkingController : Controller
 {
-
-
 
     //References to attached components;
     protected Transform tr;
