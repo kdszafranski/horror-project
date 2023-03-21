@@ -26,9 +26,14 @@ public class FPWalkingController : Controller
     bool jumpKeyWasLetGo = false;
     bool jumpKeyIsPressed = false;
 
-    //Movement speed;
+    // movement speeds
     public float movementSpeed = 2f;
+    public float strafeSpeed = 1.3f;
+    public float backwardSpeed = 0.8f;
+    
+    // running
     public float runSpeed = 3.5f;
+	public bool runKeyIsPressed = false;
 
     //How fast the controller can change direction while in the air;
     //Higher values result in more air control;
@@ -106,7 +111,14 @@ public class FPWalkingController : Controller
         if (jumpingAllowed) {
             HandleJumpKeyInput();
         }
+
+        HandleRunKeyInput();
     }
+
+    void HandleRunKeyInput()
+	{
+		runKeyIsPressed = Input.GetButton("Run");
+	}
 
     //Handle jump booleans for later use in FixedUpdate;
     void HandleJumpKeyInput()
@@ -219,7 +231,12 @@ public class FPWalkingController : Controller
         Vector3 _velocity = CalculateMovementDirection();
 
         //Multiply (normalized) velocity with movement speed;
-        _velocity *= movementSpeed;
+        if(runKeyIsPressed) {
+			_velocity *= runSpeed;
+		} else {
+			// walking
+			_velocity *= movementSpeed;
+		}
 
         return _velocity;
     }
