@@ -25,4 +25,8 @@ MonoBehaviour:
     - details: Find something to dig up the grave
       completed: 0
       id: 2
+      nextTaskId: 3
+    - details: Dig up the grave
+      completed: 0
+      id: 3
       nextTaskId: 0

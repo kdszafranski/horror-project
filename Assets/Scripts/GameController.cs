@@ -62,6 +62,7 @@ public class GameController : MonoBehaviour
     void CompleteObjective(Task task) {
         // objective met!
         // ui_currentTaskText.color = Color.yellow;
+        _currentTask.completed = true;
 
         if(task.nextTaskId > 0) {
             // load the next task
