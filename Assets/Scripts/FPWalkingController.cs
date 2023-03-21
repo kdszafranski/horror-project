@@ -26,8 +26,12 @@ public class FPWalkingController : Controller
     bool jumpKeyWasLetGo = false;
     bool jumpKeyIsPressed = false;
 
-    //Movement speed;
+    // movement speeds
     public float movementSpeed = 2f;
+    public float strafeSpeed = 1.3f;
+    public float backwardSpeed = 0.8f;
+    
+    // running
     public float runSpeed = 3.5f;
 	public bool runKeyIsPressed = false;
 
@@ -113,7 +117,7 @@ public class FPWalkingController : Controller
 
     void HandleRunKeyInput()
 	{
-		// runKeyIsPressed = Input.GetButton("Run");
+		runKeyIsPressed = Input.GetButton("Run");
 	}
 
     //Handle jump booleans for later use in FixedUpdate;
