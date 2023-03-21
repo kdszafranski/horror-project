@@ -52,7 +52,7 @@ public class GameController : MonoBehaviour
         }
     }
 
-    public void CheckTask(Objective objective) {
+    public void CheckObjective(Objective objective) {
         Debug.Log("objective met: " + objective.id);
         if(_currentTask.id == objective.id) {
             CompleteObjective(_currentTask);

@@ -8,7 +8,7 @@ public class ColliderManager : MonoBehaviour
    
     private void OnCollisionEnter(Collision other) {
         if(other.gameObject.CompareTag("Objective")) {
-            gameController.CheckTask(other.gameObject.GetComponent<Objective>());
+            gameController.CheckObjective(other.gameObject.GetComponent<Objective>());
         }    
     }
 
