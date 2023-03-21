@@ -4,5 +4,9 @@ using UnityEngine;
 public class GameData : ScriptableObject
 {
     public TaskListData taskList;
+
+    public TaskListData GetTaskListData() {
+        return taskList;
+    }
 }
 
