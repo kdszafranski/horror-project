@@ -232,8 +232,6 @@ public class FPWalkingController : Controller
         // Calculate (normalized) movement direction;
         Vector3 _velocity = CalculateMovementDirection();
 
-        
-
         // Multiply (normalized) velocity with movement speed;
         if(runKeyIsPressed) {
 			_velocity *= runSpeed;
@@ -242,6 +240,9 @@ public class FPWalkingController : Controller
 			_velocity *= movementSpeed;
 		}
 
+        // The following act as speed penalties. You're fastest when moving directly forward.
+        // You can't back-pedal away from danger! Turn and run!
+        
         // backward
         float _vert = characterInput.GetVerticalMovementInput();
         if(_vert < 0f) {
