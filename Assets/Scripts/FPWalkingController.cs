@@ -1,13 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-using CMF; // for controller base classes
+using CMF;
+using UnityEngine; // for controller base classes
 using TMPro;
 
 // Used Advanced walker controller as the starting point, too much to change relies on private stuff
 // Custom movement input can be implemented by creating a new script that inherits 'AdvancedWalkerController' and overriding the 'CalculateMovementDirection' function;
-public class FPWalkingController : Controller
-{
+public class FPWalkingController : Controller {
     // Refs to UI
     public TextMeshProUGUI ui_textOutput;
 
@@ -32,10 +31,10 @@ public class FPWalkingController : Controller
     public float movementSpeed = 2f;
     public float strafeSpeed = 1.3f;
     public float backwardSpeed = 0.8f;
-    
+
     // running
     public float runSpeed = 3.5f;
-	public bool runKeyIsPressed = false;
+    public bool runKeyIsPressed = false;
 
     //How fast the controller can change direction while in the air;
     //Higher values result in more air control;
@@ -74,8 +73,7 @@ public class FPWalkingController : Controller
     public bool useLocalMomentum = false;
 
     //Enum describing basic controller states; 
-    public enum ControllerState
-    {
+    public enum ControllerState {
         Grounded,
         Sliding,
         Falling,
@@ -89,8 +87,7 @@ public class FPWalkingController : Controller
     public Transform cameraTransform;
 
     //Get references to all necessary components;
-    void Awake()
-    {
+    void Awake() {
         mover = GetComponent<Mover>();
         tr = transform;
         characterInput = GetComponent<CharacterInput>();
@@ -104,12 +101,9 @@ public class FPWalkingController : Controller
     }
 
     //This function is called right after Awake(); It can be overridden by inheriting scripts;
-    protected virtual void Setup()
-    {
-    }
+    protected virtual void Setup() { }
 
-    void Update()
-    {
+    void Update() {
         if (jumpingAllowed) {
             HandleJumpKeyInput();
         }
@@ -117,21 +111,18 @@ public class FPWalkingController : Controller
         HandleRunKeyInput();
     }
 
-    void HandleRunKeyInput()
-	{
-		runKeyIsPressed = Input.GetButton("Run");
-	}
+    void HandleRunKeyInput() {
+        runKeyIsPressed = Input.GetButton("Run");
+    }
 
     //Handle jump booleans for later use in FixedUpdate;
-    void HandleJumpKeyInput()
-    {
+    void HandleJumpKeyInput() {
         bool _newJumpKeyPressedState = IsJumpKeyPressed();
 
         if (jumpKeyIsPressed == false && _newJumpKeyPressedState == true)
             jumpKeyWasPressed = true;
 
-        if (jumpKeyIsPressed == true && _newJumpKeyPressedState == false)
-        {
+        if (jumpKeyIsPressed == true && _newJumpKeyPressedState == false) {
             jumpKeyWasLetGo = true;
             jumpInputIsLocked = false;
         }
@@ -139,15 +130,13 @@ public class FPWalkingController : Controller
         jumpKeyIsPressed = _newJumpKeyPressedState;
     }
 
-    void FixedUpdate()
-    {
+    void FixedUpdate() {
         ControllerUpdate();
     }
 
     //Update controller;
     //This function must be called every fixed update, in order for the controller to work correctly;
-    void ControllerUpdate()
-    {
+    void ControllerUpdate() {
         //Check if mover is grounded;
         mover.CheckForGround();
 
@@ -197,8 +186,7 @@ public class FPWalkingController : Controller
 
     //Calculate and return movement direction based on player input;
     //This function can be overridden by inheriting scripts to implement different player controls;
-    protected virtual Vector3 CalculateMovementDirection()
-    {
+    protected virtual Vector3 CalculateMovementDirection() {
         //If no character input script is attached to this object, return;
         if (characterInput == null)
             return Vector3.zero;
@@ -206,13 +194,10 @@ public class FPWalkingController : Controller
         Vector3 _velocity = Vector3.zero;
 
         //If no camera transform has been assigned, use the character's transform axes to calculate the movement direction;
-        if (cameraTransform == null)
-        {
+        if (cameraTransform == null) {
             _velocity += tr.right * characterInput.GetHorizontalMovementInput();
             _velocity += tr.forward * characterInput.GetVerticalMovementInput();
-        }
-        else
-        {
+        } else {
             //If a camera transform has been assigned, use the assigned transform's axes for movement direction;
             //Project movement direction so movement stays parallel to the ground;
             _velocity += Vector3.ProjectOnPlane(cameraTransform.right, tr.up).normalized * characterInput.GetHorizontalMovementInput();
@@ -227,44 +212,42 @@ public class FPWalkingController : Controller
     }
 
     //Calculate and return movement velocity based on player input, controller state, ground normal [...];
-    protected virtual Vector3 CalculateMovementVelocity()
-    {
+    protected virtual Vector3 CalculateMovementVelocity() {
         // Calculate (normalized) movement direction;
         Vector3 _velocity = CalculateMovementDirection();
+        bool isMovingBackward = false;
 
-        // Multiply (normalized) velocity with movement speed;
-        if(runKeyIsPressed) {
-			_velocity *= runSpeed;
-		} else {
-			// walking
-			_velocity *= movementSpeed;
-		}
-
+        // backward
         // The following act as speed penalties. You're fastest when moving directly forward.
         // You can't back-pedal away from danger! Turn and run!
-        
-        // backward
         float _vert = characterInput.GetVerticalMovementInput();
-        if(_vert < 0f) {
+        if (_vert < 0f) {
+            isMovingBackward = true;
             _velocity *= backwardSpeed;
+        }
+
+        // Multiply (normalized) velocity with movement speed;
+        if (runKeyIsPressed && !isMovingBackward) {
+            _velocity *= runSpeed;
+        } else {
+            // walking
+            _velocity *= movementSpeed;
         }
 
         // strafing/sideways movement
         float _horz = characterInput.GetHorizontalMovementInput();
-        if(_horz > 0 || _horz < 0) {
+        if (_horz > 0 || _horz < 0) {
             _velocity *= strafeSpeed;
         }
 
         // ui
         ui_textOutput.text = _velocity.ToString();
-        
 
         return _velocity;
     }
 
     //Returns 'true' if the player presses the jump key;
-    protected virtual bool IsJumpKeyPressed()
-    {
+    protected virtual bool IsJumpKeyPressed() {
         //If no character input script is attached to this object, return;
         if (characterInput == null)
             return false;
@@ -274,28 +257,23 @@ public class FPWalkingController : Controller
 
     //Determine current controller state based on current momentum and whether the controller is grounded (or not);
     //Handle state transitions;
-    ControllerState DetermineControllerState()
-    {
+    ControllerState DetermineControllerState() {
         //Check if vertical momentum is pointing upwards;
         bool _isRising = IsRisingOrFalling() && (VectorMath.GetDotProduct(GetMomentum(), tr.up) > 0f);
         //Check if controller is sliding;
         bool _isSliding = mover.IsGrounded() && IsGroundTooSteep();
 
         //Grounded;
-        if (currentControllerState == ControllerState.Grounded)
-        {
-            if (_isRising)
-            {
+        if (currentControllerState == ControllerState.Grounded) {
+            if (_isRising) {
                 OnGroundContactLost();
                 return ControllerState.Rising;
             }
-            if (!mover.IsGrounded())
-            {
+            if (!mover.IsGrounded()) {
                 OnGroundContactLost();
                 return ControllerState.Falling;
             }
-            if (_isSliding)
-            {
+            if (_isSliding) {
                 OnGroundContactLost();
                 return ControllerState.Sliding;
             }
@@ -303,39 +281,31 @@ public class FPWalkingController : Controller
         }
 
         //Falling;
-        if (currentControllerState == ControllerState.Falling)
-        {
-            if (_isRising)
-            {
+        if (currentControllerState == ControllerState.Falling) {
+            if (_isRising) {
                 return ControllerState.Rising;
             }
-            if (mover.IsGrounded() && !_isSliding)
-            {
+            if (mover.IsGrounded() && !_isSliding) {
                 OnGroundContactRegained();
                 return ControllerState.Grounded;
             }
-            if (_isSliding)
-            {
+            if (_isSliding) {
                 return ControllerState.Sliding;
             }
             return ControllerState.Falling;
         }
 
         //Sliding;
-        if (currentControllerState == ControllerState.Sliding)
-        {
-            if (_isRising)
-            {
+        if (currentControllerState == ControllerState.Sliding) {
+            if (_isRising) {
                 OnGroundContactLost();
                 return ControllerState.Rising;
             }
-            if (!mover.IsGrounded())
-            {
+            if (!mover.IsGrounded()) {
                 OnGroundContactLost();
                 return ControllerState.Falling;
             }
-            if (mover.IsGrounded() && !_isSliding)
-            {
+            if (mover.IsGrounded() && !_isSliding) {
                 OnGroundContactRegained();
                 return ControllerState.Grounded;
             }
@@ -343,30 +313,23 @@ public class FPWalkingController : Controller
         }
 
         //Rising;
-        if (currentControllerState == ControllerState.Rising)
-        {
-            if (!_isRising)
-            {
-                if (mover.IsGrounded() && !_isSliding)
-                {
+        if (currentControllerState == ControllerState.Rising) {
+            if (!_isRising) {
+                if (mover.IsGrounded() && !_isSliding) {
                     OnGroundContactRegained();
                     return ControllerState.Grounded;
                 }
-                if (_isSliding)
-                {
+                if (_isSliding) {
                     return ControllerState.Sliding;
                 }
-                if (!mover.IsGrounded())
-                {
+                if (!mover.IsGrounded()) {
                     return ControllerState.Falling;
                 }
             }
 
             //If a ceiling detector has been attached to this gameobject, check for ceiling hits;
-            if (ceilingDetector != null)
-            {
-                if (ceilingDetector.HitCeiling())
-                {
+            if (ceilingDetector != null) {
+                if (ceilingDetector.HitCeiling()) {
                     OnCeilingContact();
                     return ControllerState.Falling;
                 }
@@ -375,8 +338,7 @@ public class FPWalkingController : Controller
         }
 
         //Jumping;
-        if (currentControllerState == ControllerState.Jumping)
-        {
+        if (currentControllerState == ControllerState.Jumping) {
             //Check for jump timeout;
             if ((Time.time - currentJumpStartTime) > jumpDuration)
                 return ControllerState.Rising;
@@ -386,10 +348,8 @@ public class FPWalkingController : Controller
                 return ControllerState.Rising;
 
             //If a ceiling detector has been attached to this gameobject, check for ceiling hits;
-            if (ceilingDetector != null)
-            {
-                if (ceilingDetector.HitCeiling())
-                {
+            if (ceilingDetector != null) {
+                if (ceilingDetector.HitCeiling()) {
                     OnCeilingContact();
                     return ControllerState.Falling;
                 }
@@ -401,12 +361,9 @@ public class FPWalkingController : Controller
     }
 
     //Check if player has initiated a jump;
-    void HandleJumping()
-    {
-        if (currentControllerState == ControllerState.Grounded)
-        {
-            if ((jumpKeyIsPressed == true || jumpKeyWasPressed) && !jumpInputIsLocked)
-            {
+    void HandleJumping() {
+        if (currentControllerState == ControllerState.Grounded) {
+            if ((jumpKeyIsPressed == true || jumpKeyWasPressed) && !jumpInputIsLocked) {
                 //Call events;
                 OnGroundContactLost();
                 OnJumpStart();
@@ -419,8 +376,7 @@ public class FPWalkingController : Controller
     //Apply friction to both vertical and horizontal momentum based on 'friction' and 'gravity';
     //Handle movement in the air;
     //Handle sliding down steep slopes;
-    void HandleMomentum()
-    {
+    void HandleMomentum() {
         //If local momentum is used, transform momentum into world coordinates first;
         if (useLocalMomentum)
             momentum = tr.localToWorldMatrix * momentum;
@@ -429,8 +385,7 @@ public class FPWalkingController : Controller
         Vector3 _horizontalMomentum = Vector3.zero;
 
         //Split momentum into vertical and horizontal components;
-        if (momentum != Vector3.zero)
-        {
+        if (momentum != Vector3.zero) {
             _verticalMomentum = VectorMath.ExtractDotVector(momentum, tr.up);
             _horizontalMomentum = momentum - _verticalMomentum;
         }
@@ -443,13 +398,11 @@ public class FPWalkingController : Controller
             _verticalMomentum = Vector3.zero;
 
         //Manipulate momentum to steer controller in the air (if controller is not grounded or sliding);
-        if (!IsGrounded())
-        {
+        if (!IsGrounded()) {
             Vector3 _movementVelocity = CalculateMovementVelocity();
 
             //If controller has received additional momentum from somewhere else;
-            if (_horizontalMomentum.magnitude > movementSpeed)
-            {
+            if (_horizontalMomentum.magnitude > movementSpeed) {
                 //Prevent unwanted accumulation of speed in the direction of the current momentum;
                 if (VectorMath.GetDotProduct(_movementVelocity, _horizontalMomentum.normalized) > 0f)
                     _movementVelocity = VectorMath.RemoveDotVector(_movementVelocity, _horizontalMomentum.normalized);
@@ -459,8 +412,7 @@ public class FPWalkingController : Controller
                 _horizontalMomentum += _movementVelocity * Time.deltaTime * airControlRate * _airControlMultiplier;
             }
             //If controller has not received additional momentum;
-            else
-            {
+            else {
                 //Clamp _horizontal velocity to prevent accumulation of speed;
                 _horizontalMomentum += _movementVelocity * Time.deltaTime * airControlRate;
                 _horizontalMomentum = Vector3.ClampMagnitude(_horizontalMomentum, movementSpeed);
@@ -468,8 +420,7 @@ public class FPWalkingController : Controller
         }
 
         //Steer controller on slopes;
-        if (currentControllerState == ControllerState.Sliding)
-        {
+        if (currentControllerState == ControllerState.Sliding) {
             //Calculate vector pointing away from slope;
             Vector3 _pointDownVector = Vector3.ProjectOnPlane(mover.GetGroundNormal(), tr.up).normalized;
 
@@ -492,8 +443,7 @@ public class FPWalkingController : Controller
         momentum = _horizontalMomentum + _verticalMomentum;
 
         //Additional momentum calculations for sliding;
-        if (currentControllerState == ControllerState.Sliding)
-        {
+        if (currentControllerState == ControllerState.Sliding) {
             //Project the current momentum onto the current ground normal if the controller is sliding down a slope;
             momentum = Vector3.ProjectOnPlane(momentum, mover.GetGroundNormal());
 
@@ -507,8 +457,7 @@ public class FPWalkingController : Controller
         }
 
         //If controller is jumping, override vertical velocity with jumpSpeed;
-        if (currentControllerState == ControllerState.Jumping)
-        {
+        if (currentControllerState == ControllerState.Jumping) {
             momentum = VectorMath.RemoveDotVector(momentum, tr.up);
             momentum += tr.up * jumpSpeed;
         }
@@ -520,8 +469,7 @@ public class FPWalkingController : Controller
     //Events;
 
     //This function is called when the player has initiated a jump;
-    void OnJumpStart()
-    {
+    void OnJumpStart() {
         //If local momentum is used, transform momentum into world coordinates first;
         if (useLocalMomentum)
             momentum = tr.localToWorldMatrix * momentum;
@@ -544,8 +492,7 @@ public class FPWalkingController : Controller
     }
 
     //This function is called when the controller has lost ground contact, i.e. is either falling or rising, or generally in the air;
-    void OnGroundContactLost()
-    {
+    void OnGroundContactLost() {
         //If local momentum is used, transform momentum into world coordinates first;
         if (useLocalMomentum)
             momentum = tr.localToWorldMatrix * momentum;
@@ -554,8 +501,7 @@ public class FPWalkingController : Controller
         Vector3 _velocity = GetMovementVelocity();
 
         //Check if the controller has both momentum and a current movement velocity;
-        if (_velocity.sqrMagnitude >= 0f && momentum.sqrMagnitude > 0f)
-        {
+        if (_velocity.sqrMagnitude >= 0f && momentum.sqrMagnitude > 0f) {
             //Project momentum onto movement direction;
             Vector3 _projectedMomentum = Vector3.Project(momentum, _velocity.normalized);
             //Calculate dot product to determine whether momentum and movement are aligned;
@@ -577,11 +523,9 @@ public class FPWalkingController : Controller
     }
 
     //This function is called when the controller has landed on a surface after being in the air;
-    void OnGroundContactRegained()
-    {
+    void OnGroundContactRegained() {
         //Call 'OnLand' event;
-        if (OnLand != null)
-        {
+        if (OnLand != null) {
             Vector3 _collisionVelocity = momentum;
             //If local momentum is used, transform momentum into world coordinates first;
             if (useLocalMomentum)
@@ -593,8 +537,7 @@ public class FPWalkingController : Controller
     }
 
     //This function is called when the controller has collided with a ceiling while jumping or moving upwards;
-    void OnCeilingContact()
-    {
+    void OnCeilingContact() {
         //If local momentum is used, transform momentum into world coordinates first;
         if (useLocalMomentum)
             momentum = tr.localToWorldMatrix * momentum;
@@ -609,8 +552,7 @@ public class FPWalkingController : Controller
     //Helper functions;
 
     //Returns 'true' if vertical momentum is above a small threshold;
-    private bool IsRisingOrFalling()
-    {
+    private bool IsRisingOrFalling() {
         //Calculate current vertical momentum;
         Vector3 _verticalMomentum = VectorMath.ExtractDotVector(GetMomentum(), tr.up);
 
@@ -623,8 +565,7 @@ public class FPWalkingController : Controller
     }
 
     //Returns true if angle between controller and ground normal is too big (> slope limit), i.e. ground is too steep;
-    private bool IsGroundTooSteep()
-    {
+    private bool IsGroundTooSteep() {
         if (!mover.IsGrounded())
             return true;
 
@@ -634,20 +575,17 @@ public class FPWalkingController : Controller
     //Getters;
 
     //Get last frame's velocity;
-    public override Vector3 GetVelocity()
-    {
+    public override Vector3 GetVelocity() {
         return savedVelocity;
     }
 
     //Get last frame's movement velocity (momentum is ignored);
-    public override Vector3 GetMovementVelocity()
-    {
+    public override Vector3 GetMovementVelocity() {
         return savedMovementVelocity;
     }
 
     //Get current momentum;
-    public Vector3 GetMomentum()
-    {
+    public Vector3 GetMomentum() {
         Vector3 _worldMomentum = momentum;
         if (useLocalMomentum)
             _worldMomentum = tr.localToWorldMatrix * momentum;
@@ -656,20 +594,17 @@ public class FPWalkingController : Controller
     }
 
     //Returns 'true' if controller is grounded (or sliding down a slope);
-    public override bool IsGrounded()
-    {
+    public override bool IsGrounded() {
         return (currentControllerState == ControllerState.Grounded || currentControllerState == ControllerState.Sliding);
     }
 
     //Returns 'true' if controller is sliding;
-    public bool IsSliding()
-    {
+    public bool IsSliding() {
         return (currentControllerState == ControllerState.Sliding);
     }
 
     //Add momentum to controller;
-    public void AddMomentum(Vector3 _momentum)
-    {
+    public void AddMomentum(Vector3 _momentum) {
         if (useLocalMomentum)
             momentum = tr.localToWorldMatrix * momentum;
 
@@ -680,8 +615,7 @@ public class FPWalkingController : Controller
     }
 
     //Set controller momentum directly;
-    public void SetMomentum(Vector3 _newMomentum)
-    {
+    public void SetMomentum(Vector3 _newMomentum) {
         if (useLocalMomentum)
             momentum = tr.worldToLocalMatrix * _newMomentum;
         else
