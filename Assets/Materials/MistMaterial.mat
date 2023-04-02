@@ -37,11 +37,17 @@ Material:
         m_Texture: {fileID: 2800000, guid: c1717dd02805061439bb23cad7d04584, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _RampTex:
+        m_Texture: {fileID: 2800000, guid: f576e7a6ab614f445bae25217abcfdfb, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _BUILTIN_QueueControl: 0
     - _BUILTIN_QueueOffset: 0
-    - _FogHeight: 5.9
+    - _ColorPower: 0.32
+    - _DepthFade: 1.62
+    - _FogHeight: 6.56
     m_Colors:
     - _FogNoiseOffsetSpeed: {r: 0.03, g: 0.04, b: 0, a: 0}
     - _FogNoiseTile: {r: 3, g: 3, b: 0, a: 0}
