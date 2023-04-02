@@ -49,8 +49,8 @@ Material:
     m_Floats:
     - _BUILTIN_QueueControl: 0
     - _BUILTIN_QueueOffset: 0
-    - _ColorPower: 0.81
-    - _DepthFade: 2.68
+    - _ColorPower: 6.8
+    - _DepthFade: 2.83
     - _FogHeight: 9.63
     m_Colors:
     - _FogNoiseOffsetSpeed: {r: 0.005, g: 0.008, b: 0, a: 0}
