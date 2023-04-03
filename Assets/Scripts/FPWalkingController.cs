@@ -31,12 +31,11 @@ public class FPWalkingController : Controller {
     public float movementSpeed = 2f;
     public float strafeSpeed = 1.3f;
     public float backwardSpeed = 0.8f;
+    public float crouchSpeed = 0.65f; // applied last, 65%
 
     // running
     public float runSpeed = 3.5f;
     public bool runKeyIsPressed = false;
-    // crouching
-    public bool crouchKeyIsPressed = false;
 
     //How fast the controller can change direction while in the air;
     //Higher values result in more air control;
@@ -119,7 +118,26 @@ public class FPWalkingController : Controller {
     }
 
     void HandleCrouchKeyInput() {
-        crouchKeyIsPressed = Input.GetButton("Crouch");
+        if(Input.GetButtonDown("Crouch")) {
+            // crouching, stand up
+            if(isCrouching) {
+                MoveCameraToStanding();
+                isCrouching = false;
+            } else {
+                MoveCameraToCrouch();
+                isCrouching = true;
+            }
+        }
+
+        
+    }
+
+    void MoveCameraToCrouch() {
+        cameraTransform.localPosition = new Vector3(cameraTransform.localPosition.x, -0.96f, cameraTransform.localPosition.z);
+    }
+
+    void MoveCameraToStanding() {
+        cameraTransform.localPosition = Vector3.zero;
     }
 
     //Handle jump booleans for later use in FixedUpdate;
@@ -245,6 +263,10 @@ public class FPWalkingController : Controller {
         float _horz = characterInput.GetHorizontalMovementInput();
         if (_horz > 0 || _horz < 0) {
             _velocity *= strafeSpeed;
+        }
+
+        if(isCrouching) {
+            _velocity *= crouchSpeed; // 70% movement due to crouching
         }
 
         // ui
