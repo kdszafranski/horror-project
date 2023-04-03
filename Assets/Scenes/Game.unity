@@ -8662,6 +8662,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GroundFogArea
       objectReference: {fileID: 0}
+    - target: {fileID: 961661758043735509, guid: fa127b52c4f587149a84ea177ab43128, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fa127b52c4f587149a84ea177ab43128, type: 3}
 --- !u!1001 &711986041105216566

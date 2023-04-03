@@ -35,6 +35,8 @@ public class FPWalkingController : Controller {
     // running
     public float runSpeed = 3.5f;
     public bool runKeyIsPressed = false;
+    // crouching
+    public bool crouchKeyIsPressed = false;
 
     //How fast the controller can change direction while in the air;
     //Higher values result in more air control;
@@ -109,10 +111,15 @@ public class FPWalkingController : Controller {
         }
 
         HandleRunKeyInput();
+        HandleCrouchKeyInput();
     }
 
     void HandleRunKeyInput() {
         runKeyIsPressed = Input.GetButton("Run");
+    }
+
+    void HandleCrouchKeyInput() {
+        crouchKeyIsPressed = Input.GetButton("Crouch");
     }
 
     //Handle jump booleans for later use in FixedUpdate;
