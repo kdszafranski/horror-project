@@ -20,6 +20,7 @@ public class FPWalkingController : Controller {
     public bool isCrouching = false;
     public bool isRunning = false;
     public bool jumpingAllowed = true;
+    public float crouchCameraPosition = -0.96f;
 
     //Jump key variables;
     bool jumpInputIsLocked = false;
@@ -133,11 +134,21 @@ public class FPWalkingController : Controller {
     }
 
     void MoveCameraToCrouch() {
-        cameraTransform.localPosition = new Vector3(cameraTransform.localPosition.x, -0.96f, cameraTransform.localPosition.z);
+        Hashtable options = new Hashtable();
+        options.Add("position", new Vector3(cameraTransform.localPosition.x, crouchCameraPosition, cameraTransform.localPosition.z));
+        options.Add("time", 0.40f);
+        options.Add("islocal", true);
+
+        iTween.MoveTo(cameraTransform.gameObject, options);
     }
 
     void MoveCameraToStanding() {
-        cameraTransform.localPosition = Vector3.zero;
+        Hashtable options = new Hashtable();
+        options.Add("position", Vector3.zero);
+        options.Add("time", 0.50f);
+        options.Add("islocal", true);
+
+        iTween.MoveTo(cameraTransform.gameObject, options);
     }
 
     //Handle jump booleans for later use in FixedUpdate;
