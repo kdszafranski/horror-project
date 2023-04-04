@@ -21,6 +21,11 @@ public class FPWalkingController : Controller {
     public bool isRunning = false;
     public bool jumpingAllowed = true;
 
+    // Crouching
+    public float crouchCameraPosition = -0.96f;
+    [SerializeField] private float crouchColliderHeight = 1.42f;
+    [SerializeField] private float standingColliderHeight; // set from mover on Awake
+
     //Jump key variables;
     bool jumpInputIsLocked = false;
     bool jumpKeyWasPressed = false;
@@ -31,12 +36,11 @@ public class FPWalkingController : Controller {
     public float movementSpeed = 2f;
     public float strafeSpeed = 1.3f;
     public float backwardSpeed = 0.8f;
+    public float crouchSpeed = 0.65f; // applied last, 65%
 
     // running
     public float runSpeed = 3.5f;
     public bool runKeyIsPressed = false;
-    // crouching
-    public bool crouchKeyIsPressed = false;
 
     //How fast the controller can change direction while in the air;
     //Higher values result in more air control;
@@ -103,7 +107,9 @@ public class FPWalkingController : Controller {
     }
 
     //This function is called right after Awake(); It can be overridden by inheriting scripts;
-    protected virtual void Setup() { }
+    protected virtual void Setup() {
+        standingColliderHeight = mover.GetColliderHeight();
+    }
 
     void Update() {
         if (jumpingAllowed) {
@@ -119,7 +125,39 @@ public class FPWalkingController : Controller {
     }
 
     void HandleCrouchKeyInput() {
-        crouchKeyIsPressed = Input.GetButton("Crouch");
+        if (Input.GetButtonDown("Crouch")) {
+            // crouching, stand up
+            if (isCrouching) {
+                MoveCameraToStanding();
+                isCrouching = false;
+            } else {
+                MoveCameraToCrouch();
+                isCrouching = true;
+            }
+        }
+
+    }
+
+    void MoveCameraToCrouch() {
+        Hashtable options = new Hashtable();
+        options.Add("position", new Vector3(cameraTransform.localPosition.x, crouchCameraPosition, cameraTransform.localPosition.z));
+        options.Add("time", 0.40f);
+        options.Add("islocal", true);
+        // move
+        iTween.MoveTo(cameraTransform.gameObject, options);
+        // lower collider
+        mover.SetColliderHeight(crouchColliderHeight);
+    }
+
+    void MoveCameraToStanding() {
+        Hashtable options = new Hashtable();
+        options.Add("position", Vector3.zero);
+        options.Add("time", 0.50f);
+        options.Add("islocal", true);
+        // move
+        iTween.MoveTo(cameraTransform.gameObject, options);
+        // reset collider to standing height
+        mover.SetColliderHeight(standingColliderHeight);
     }
 
     //Handle jump booleans for later use in FixedUpdate;
@@ -245,6 +283,10 @@ public class FPWalkingController : Controller {
         float _horz = characterInput.GetHorizontalMovementInput();
         if (_horz > 0 || _horz < 0) {
             _velocity *= strafeSpeed;
+        }
+
+        if (isCrouching) {
+            _velocity *= crouchSpeed; // 70% movement due to crouching
         }
 
         // ui
