@@ -9121,6 +9121,10 @@ PrefabInstance:
       value: 0.7
       objectReference: {fileID: 0}
     - target: {fileID: 5338780202859290862, guid: 80020809ac4229342b8b2a2a1475b11e, type: 3}
+      propertyPath: isInDebugMode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5338780202859290862, guid: 80020809ac4229342b8b2a2a1475b11e, type: 3}
       propertyPath: colliderThickness
       value: 0.62
       objectReference: {fileID: 0}

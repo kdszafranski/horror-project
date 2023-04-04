@@ -338,6 +338,10 @@ namespace CMF
 			RecalculateColliderDimensions();
 		}
 
+		public float GetColliderHeight() {
+			return colliderHeight;
+		}
+
 		//Set thickness/width of collider;
 		public void SetColliderThickness(float _newColliderThickness)
 		{
