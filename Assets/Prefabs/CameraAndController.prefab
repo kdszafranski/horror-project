@@ -16,7 +16,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5440382146905836649
 Transform:
   m_ObjectHideFlags: 0
@@ -24,14 +24,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5440382146905836648}
-  m_LocalRotation: {x: 0.01745245, y: 0, z: 0, w: 0.99984777}
-  m_LocalPosition: {x: 0, y: -0.418, z: 0.566}
+  m_LocalRotation: {x: -0.010210007, y: 0, z: 0, w: 0.9999479}
+  m_LocalPosition: {x: 0, y: -0.418, z: 0.103}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5444694615863200394}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 2, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -1.17, y: 0, z: 0}
 --- !u!108 &5440382146905836650
 Light:
   m_ObjectHideFlags: 0
@@ -43,15 +43,15 @@ Light:
   serializedVersion: 10
   m_Type: 0
   m_Shape: 0
-  m_Color: {r: 0.8962264, g: 0.8811021, b: 0.71444464, a: 1}
-  m_Intensity: 2.27
-  m_Range: 9.31
-  m_SpotAngle: 34.8
+  m_Color: {r: 0.7736294, g: 0.89065385, b: 0.8962264, a: 1}
+  m_Intensity: 4
+  m_Range: 3.9317508
+  m_SpotAngle: 40.21713
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 2
-    m_Resolution: -1
+    m_Type: 0
+    m_Resolution: 1
     m_CustomResolution: -1
     m_Strength: 1
     m_Bias: 0
@@ -141,6 +141,7 @@ GameObject:
   - component: {fileID: 5338604981988729906}
   - component: {fileID: 5379193661232537488}
   - component: {fileID: 5338595356697513690}
+  - component: {fileID: 1298136225}
   m_Layer: 0
   m_Name: CameraAndController
   m_TagString: Untagged
@@ -175,10 +176,10 @@ CapsuleCollider:
   m_Material: {fileID: 13400000, guid: e22c35a45fac28e4eb8a295407e775b7, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 1.5
+  m_Radius: 0.31
+  m_Height: 0.822
   m_Direction: 1
-  m_Center: {x: 0, y: 1.25, z: 0}
+  m_Center: {x: 0, y: 1.589, z: 0}
 --- !u!114 &5338780202859290862
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -191,12 +192,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d98ace8715c2a184ca85247b18eb0853, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  stepHeightRatio: 0.25
+  stepHeightRatio: 0.589
   colliderHeight: 2
-  colliderThickness: 1
+  colliderThickness: 0.62
   colliderOffset: {x: 0, y: 0.5, z: 0}
   sensorType: 0
-  isInDebugMode: 0
+  isInDebugMode: 1
   sensorArrayRows: 1
   sensorArrayRayCount: 5
   sensorArrayRowsAreOffset: 0
@@ -236,19 +237,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54ae503fc8efa3e499a1896932413296, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ui_textOutput: {fileID: 0}
   isCrouching: 0
   isRunning: 0
   jumpingAllowed: 0
+  crouchCameraPosition: -0.96
+  crouchColliderHeight: 1.42
+  standingColliderHeight: 0
   movementSpeed: 2
-  runSpeed: 3.5
+  strafeSpeed: 0.65
+  backwardSpeed: 0.5
+  crouchSpeed: 0.65
+  runSpeed: 3.1
+  runKeyIsPressed: 0
   airControlRate: 2
   jumpSpeed: 10
   jumpDuration: 0.2
   airFriction: 0.5
   groundFriction: 100
   gravity: 30
-  slideGravity: 5
-  slopeLimit: 80
+  slideGravity: 4
+  slopeLimit: 38
   useLocalMomentum: 0
   cameraTransform: {fileID: 5444694615863200394}
 --- !u!114 &5338604981988729906
@@ -378,7 +387,7 @@ MonoBehaviour:
   audioSource: {fileID: 5379193661232537488}
   useAnimationBasedFootsteps: 0
   landVelocityThreshold: 5
-  footstepDistance: 2
+  footstepDistance: 0.7
   audioClipVolume: 0.2
   relativeRandomizedVolumeRange: 0.2
   footStepClips:
@@ -386,6 +395,19 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 3efdd4c11a4bdc54a9087ab115c1de9e, type: 3}
   jumpClip: {fileID: 8300000, guid: 99ab8a4503de1f448ad764a5c4cdf9cc, type: 3}
   landClip: {fileID: 8300000, guid: c212aa2d646dfe248b7c96b4f0e4cb27, type: 3}
+--- !u!114 &1298136225
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5441641595742812120}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef2a2e42d9648f7408bb199f540ff2a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameController: {fileID: 0}
 --- !u!1 &5441812688181616402
 GameObject:
   m_ObjectHideFlags: 0
